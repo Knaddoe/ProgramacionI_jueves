@@ -14,16 +14,57 @@ public class TamagochiManager : MonoBehaviour
     public float clean, cleanThreshold = 10;
     public float happy, happyThreshold =10;
     public Image barSatiety, barClean, barHappy;
+    public ParticleSystem sickParticles;
+    public Animator anim;
 
     public static TamagochiManager instance;
 
     private void Update()
     {
-        barSatiety.fillAmount = satiety / satietyThreshold;
-        barClean.fillAmount = clean / cleanThreshold;
-        barHappy.fillAmount = happy / happyThreshold;
+        barSatiety.fillAmount = GetSatiety();
+        barClean.fillAmount = GetClean();
+        barHappy.fillAmount = GetHappy();
+        if (GetClean() < .25f || GetSatiety() < .25f || 
+            GetHappy() < .25f)
+        {
+            anim.SetBool("Sad", true);
+            if (sickParticles.isStopped)
+            {
+                sickParticles.Play();
+            }
+        }
+        else
+        {
+            anim.SetBool("Sad", false);
+            if (!sickParticles.isStopped)
+            {
+                sickParticles.Stop();
+            }
+        }
+
+        if (GetClean() > .75f || GetSatiety() > .75f ||
+            GetHappy() > .75f)
+        {
+            anim.SetBool("Happy", true);
+        }
+        else
+        {
+            anim.SetBool("Happy", false);
+        }
     }
 
+    public float GetSatiety()
+    {
+        return satiety / satietyThreshold; 
+    }
+    public float GetClean()
+    {
+        return clean / cleanThreshold;
+    }
+    public float GetHappy()
+    {
+        return happy / happyThreshold;
+    }
     private void Awake()
     {
         instance = this;
@@ -31,11 +72,17 @@ public class TamagochiManager : MonoBehaviour
 
     public void Feed(float amount)
     {
+        anim.SetBool("Eat", true);
         satiety += amount;
         if(satiety > satietyThreshold)
         {
             satiety = satietyThreshold;
         }
+    }
+
+    public void SetEat()
+    {
+        anim.SetBool("Eat", false);
     }
     public void Clean(float amount)
     {
@@ -69,6 +116,4 @@ public class TamagochiManager : MonoBehaviour
                 break;
         }
     }
-    
-
 }
