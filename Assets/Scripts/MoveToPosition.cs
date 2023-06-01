@@ -13,6 +13,7 @@ public class MoveToPosition : MonoBehaviour
     public NavMeshAgent theAgent;
     public Animator anim;
     public STATES_PLAYER states;
+    public Transform target;
 
     private void Update()
     {
@@ -31,6 +32,7 @@ public class MoveToPosition : MonoBehaviour
                     case "Enemy":
                         theAgent.SetDestination(hit.transform.position);
                         states = STATES_PLAYER.RUNNING_TO_ATTACK;
+                        target = hit.transform;
                         break;
                 }
             }
@@ -48,6 +50,26 @@ public class MoveToPosition : MonoBehaviour
                     break;
             }
         }
+
+        if (states == STATES_PLAYER.ATTACKING)
+        {
+            if (target == null)
+            {
+                states = STATES_PLAYER.IDLE;
+            }
+            else
+            {
+                // Create a rotation based on the direction to the target
+                Vector3 directionToTarget = target.position - transform.position;
+                directionToTarget.y = 0; // This line ensures that the agent only rotates around the y-axis
+                Quaternion rotation = Quaternion.LookRotation(directionToTarget);
+
+                // Smoothly rotate the agent to this new rotation
+                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime*2);
+            }
+           
+        }
+        
         anim.SetBool("Attack", states == STATES_PLAYER.ATTACKING);
         float actualSpeedPlayerNormalized = theAgent.velocity.magnitude / theAgent.speed;
         anim.SetFloat("Mov", actualSpeedPlayerNormalized);
