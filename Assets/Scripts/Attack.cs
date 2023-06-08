@@ -8,6 +8,7 @@ public class Attack : MonoBehaviour
     [SerializeField]private Health target;
     public float damage;
     public string tagTarget = "Enemy";
+    public States selfState;
     
     private void OnTriggerEnter(Collider other)
     {
@@ -28,5 +29,9 @@ public class Attack : MonoBehaviour
     public void AttackMelee()
     {
         target.TakeDamage(damage);
+        if (target.health <= 0)
+        {
+            selfState.states = STATES_PLAYER.IDLE;
+        }
     }
 }

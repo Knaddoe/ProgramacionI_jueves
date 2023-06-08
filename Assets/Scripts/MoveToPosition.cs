@@ -4,15 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public enum STATES_PLAYER
-{
-    IDLE, RUNNING, RUNNING_TO_ATTACK, ATTACKING
-}
+
 public class MoveToPosition : MonoBehaviour
 {
     public NavMeshAgent theAgent;
     public Animator anim;
-    public STATES_PLAYER states;
+    public States states;
     public Transform target;
 
     private void Update()
@@ -27,11 +24,11 @@ public class MoveToPosition : MonoBehaviour
                 {
                     case "Ground":
                         theAgent.SetDestination(hit.point);
-                        states = STATES_PLAYER.RUNNING;
+                        states.states = STATES_PLAYER.RUNNING;
                         break;
                     case "Enemy":
                         theAgent.SetDestination(hit.transform.position);
-                        states = STATES_PLAYER.RUNNING_TO_ATTACK;
+                        states.states = STATES_PLAYER.RUNNING_TO_ATTACK;
                         target = hit.transform;
                         break;
                 }
@@ -40,22 +37,22 @@ public class MoveToPosition : MonoBehaviour
 
         if (theAgent.remainingDistance <= theAgent.stoppingDistance && !theAgent.pathPending)
         {
-            switch (states)
+            switch (states.states)
             {
                 case STATES_PLAYER.RUNNING:
-                    states = STATES_PLAYER.IDLE;
+                    states.states = STATES_PLAYER.IDLE;
                     break;
                 case STATES_PLAYER.RUNNING_TO_ATTACK:
-                    states = STATES_PLAYER.ATTACKING;
+                    states.states = STATES_PLAYER.ATTACKING;
                     break;
             }
         }
 
-        if (states == STATES_PLAYER.ATTACKING)
+        if (states.states == STATES_PLAYER.ATTACKING)
         {
             if (target == null)
             {
-                states = STATES_PLAYER.IDLE;
+                states.states = STATES_PLAYER.IDLE;
             }
             else
             {
@@ -70,7 +67,7 @@ public class MoveToPosition : MonoBehaviour
            
         }
         
-        anim.SetBool("Attack", states == STATES_PLAYER.ATTACKING);
+        anim.SetBool("Attack", states.states == STATES_PLAYER.ATTACKING);
         float actualSpeedPlayerNormalized = theAgent.velocity.magnitude / theAgent.speed;
         anim.SetFloat("Mov", actualSpeedPlayerNormalized);
     }

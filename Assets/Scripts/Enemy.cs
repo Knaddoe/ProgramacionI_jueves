@@ -7,23 +7,23 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public Animator anim;
-    public STATES_PLAYER enemyStates;
+    public States enemyStates;
     public Health health;
     public Transform target;
 
     private void Update()
     {
-        anim.SetBool("Attack", enemyStates == STATES_PLAYER.ATTACKING);
+        anim.SetBool("Attack", enemyStates.states == STATES_PLAYER.ATTACKING);
         if (health.health <=0)
         {
             anim.SetBool("Die", true);
         }
 
-        if (enemyStates == STATES_PLAYER.ATTACKING)
+        if (enemyStates.states == STATES_PLAYER.ATTACKING)
         {
             if (target == null)
             {
-                enemyStates = STATES_PLAYER.IDLE;
+                enemyStates.states = STATES_PLAYER.IDLE;
             }
             else
             {
@@ -42,7 +42,7 @@ public class Enemy : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            enemyStates = STATES_PLAYER.ATTACKING;
+            enemyStates.states = STATES_PLAYER.ATTACKING;
             target = other.transform;
         }
     }
@@ -51,7 +51,7 @@ public class Enemy : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            enemyStates = STATES_PLAYER.IDLE;
+            enemyStates.states = STATES_PLAYER.IDLE;
             target = null;
         }
     }
