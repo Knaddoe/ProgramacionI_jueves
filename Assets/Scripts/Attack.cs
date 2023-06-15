@@ -20,7 +20,7 @@ public class Attack : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag(tagTarget))
+        if (other.CompareTag(tagTarget) && !CompareTag("Trap"))
         {
             target = null;
         }
